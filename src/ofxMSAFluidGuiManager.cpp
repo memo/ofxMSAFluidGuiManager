@@ -116,8 +116,9 @@ namespace msa {
             float vm = velMult * velMult * velMult;
             Vec2f velInvSize(1.0f/velWidth, 1.0f/velHeight);
             
-            float mw = maskImage.getPixelsRef().getWidth();
-            float mh = maskImage.getPixelsRef().getHeight();
+            auto pix = maskImage.getPixels();
+            float mw = pix.getWidth();
+            float mh = pix.getHeight();
             
             Vec2f velToMaskScaler = Vec2f(mw, mh) * velInvSize;
             
@@ -126,7 +127,7 @@ namespace msa {
             
             int velIndex = 0;
             
-            unsigned char *maskPixels = maskImage.getPixels();
+            unsigned char *maskPixels = pix.getData();
             for(int j=0; j<velHeight; j += fluidStep+1) {
                 for(int i=0; i<velWidth; i += fluidStep+1) {
                     int maskIndex = (j * velToMaskScaler.y * mw) + (i * velToMaskScaler.x);

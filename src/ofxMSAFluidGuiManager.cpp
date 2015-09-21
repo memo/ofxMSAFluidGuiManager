@@ -109,12 +109,25 @@ namespace msa {
         }
         
         
-        void GuiManager::injectVel(ofBaseHasPixels &maskImage, Vec2f *velArray, int velWidth, int velHeight) {
+        // transform coordinates to normalized coordinates applying offset and scale
+        static Vec2f posTransformedToNorm(Vec2f pos, Vec2f dim, Vec2f offset, Vec2f scale) {
+            Vec2f ret(pos/dim); // normalized
+            
+            ret -= Vec2f(0.5);
+            ret *= scale;
+            ret += Vec2f(0.5);
+            
+            ret += offset;
+            
+            return ret;
+        }
+        
+        void GuiManager::injectVel(ofBaseHasPixels &maskImage, Vec2f *velArray, Vec2f velDim, Vec2f offset, Vec2f scale) {
             if(!enabled) return;
             
             Vec2f avgVel;
             float vm = velMult * velMult * velMult;
-            Vec2f velInvSize(1.0f/velWidth, 1.0f/velHeight);
+            Vec2f velInvSize(1.0f/velDim);
             
             auto pix = maskImage.getPixels();
             float mw = pix.getWidth();
@@ -128,26 +141,26 @@ namespace msa {
             int velIndex = 0;
             
             unsigned char *maskPixels = pix.getData();
-            for(int j=0; j<velHeight; j += fluidStep+1) {
-                for(int i=0; i<velWidth; i += fluidStep+1) {
+            for(int j=0; j<velDim.y; j += fluidStep+1) {
+                for(int i=0; i<velDim.x; i += fluidStep+1) {
                     int maskIndex = (j * velToMaskScaler.y * mw) + (i * velToMaskScaler.x);
                     
                     if(maskPixels[maskIndex]>0) {
                         Vec2f vel = velArray[velIndex] * velInvSize;
                         avgVel += vel;
                         
-                        Vec2f norm = Vec2f(i, j) * velInvSize;
+                        Vec2f normPos = posTransformedToNorm(Vec2f(i, j), velDim, offset, scale);
                         
                         if(dyeAmount) {
                             float c = vel.lengthSquared() * dyeAmount;
-                            fluid.addColorAtPos(norm, Color(c, c, c));
+                            fluid.addColorAtPos(normPos, Color(c, c, c));
                         }
                         
                         vel *= vm;
                         
                         if(maxSpeed) vel.limit(maxSpeed * maxSpeed);
                         
-                        fluid.addForceAtPos(norm, vel);
+                        fluid.addForceAtPos(normPos, vel);
                         
                         changedPixels++;
                         motionCenter.x += i;

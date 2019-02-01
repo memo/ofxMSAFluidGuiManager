@@ -7,7 +7,7 @@
  *
  */
 
-#include "ofxMSAFluidGuiManager.h"
+#include "MSAFluidGuiManager.h"
 #include "ofxSimpleGuiToo.h"
 
 namespace msa {
@@ -20,7 +20,7 @@ namespace msa {
         void GuiManager::setup() {
             gui.saveToXML();
             
-            gui.addPage("FLUID").setXMLName("settings/fluid/fluid.xml");
+            gui.addPage("FLUID").setXMLName("settings/Fluid/fluid.xml");
             gui.addToggle("enabled", enabled);
             gui.addToggle("doDraw", doDraw);
             gui.addComboBox("fd.drawMode", (int&)fluidDrawer.drawMode, kDrawCount, (string*)&getDrawModeTitles()[0]);

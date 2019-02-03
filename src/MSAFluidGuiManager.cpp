@@ -183,7 +183,7 @@ namespace msa {
         
         void GuiManager::draw(float x, float y, float w, float h) {
             if(enabled && doDraw) {
-                glColor3f(1, 1, 1);
+                ofSetColor(255);
                 fluidDrawer.draw(x, y, w, h);
                 fluidVectors.draw(x, y, w, h);
             }

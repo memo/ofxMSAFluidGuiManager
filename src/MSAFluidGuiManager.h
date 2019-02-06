@@ -38,9 +38,11 @@ namespace msa {
             void draw(float x, float y, float w, float h);
             
             // offset (-1...1) and then scale in place
-            void injectVel(ofBaseHasPixels &maskPixels, Vec2f *velArray, Vec2f velDim, Vec2f offset = Vec2f(0), Vec2f scale = Vec2f(1));
+            void injectVel(ofBaseHasPixels &maskPixels, Vec2f *velArray, Vec2f velDim, Vec2f offset=Vec2f(0), Vec2f scale=Vec2f(1), ofFloatColor* pcolor=NULL);
             
         protected:
+
+            void updateSize();
         };
     }
 }

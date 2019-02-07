@@ -39,6 +39,7 @@ void GuiManager::setup() {
     gui.addSlider("velDrawMult", fluidVectors.velDrawMult, 0, 5);
     gui.addSlider("vectorSkipCount", fluidVectors.vectorSkipCount, 0, 10);
 
+    gui.addToggle("applyMask", applyMask);
     gui.addSlider("velMult", velMult, 0, 5);
     gui.addSlider("dyeAmount", dyeAmount, 0, 100);
     gui.addSlider("maxSpeed", maxSpeed, 0, 1);
@@ -125,16 +126,16 @@ static Vec2f posTransformedToNorm(Vec2f pos, Vec2f dim, Vec2f offset, Vec2f scal
     return ret;
 }
 
-void GuiManager::injectVel(ofBaseHasPixels &maskImage, Vec2f *velArray, Vec2f velDim, Vec2f offset, Vec2f scale, ofFloatColor* pcolor) {
+
+void GuiManager::injectVel(ofPixelsRef maskPixels, Vec2f *velArray, Vec2f velDim, Vec2f offset, Vec2f scale, ofFloatColor* pcolor) {
     if(!enabled) return;
 
     Vec2f avgVel;
     float vm = velMult * velMult * velMult;
     Vec2f velInvSize(1.0f/velDim);
 
-    auto pix = maskImage.getPixels();
-    float mw = pix.getWidth();
-    float mh = pix.getHeight();
+    float mw = maskPixels.getWidth();
+    float mh = maskPixels.getHeight();
 
     Vec2f velToMaskScaler = Vec2f(mw, mh) * velInvSize;
 
@@ -143,12 +144,12 @@ void GuiManager::injectVel(ofBaseHasPixels &maskImage, Vec2f *velArray, Vec2f ve
 
     int velIndex = 0;
 
-    unsigned char *maskPixels = pix.getData();
+    unsigned char *maskPixelsArr = maskPixels.getData();
     for(int j=0; j<velDim.y; j += fluidStep+1) {
         for(int i=0; i<velDim.x; i += fluidStep+1) {
             int maskIndex = (j * velToMaskScaler.y * mw) + (i * velToMaskScaler.x);
 
-            if(maskPixels[maskIndex]>0) {
+            if(applyMask==false || maskPixelsArr[maskIndex]>0) {
                 Vec2f vel = velArray[velIndex] * velInvSize;
                 avgVel += vel;
 

@@ -21,7 +21,7 @@ void GuiManager::reset() {
 void GuiManager::setup() {
     gui.saveToXML();
 
-    gui.addPage("FLUID").setXMLName("settings/Fluid/fluid.xml");
+    gui.addPage("FLUID").setXMLName("settings/fluid.xml");
     gui.addToggle("enabled", enabled);
     gui.addToggle("doDraw", doDraw);
     gui.addComboBox("fd.drawMode", (int&)fluidDrawer.drawMode, kDrawCount, (string*)&getDrawModeTitles()[0]);
